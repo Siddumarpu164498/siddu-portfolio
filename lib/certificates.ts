@@ -7,8 +7,6 @@ export type Certificate = {
   category: CertCategory
   /** Preview image under /public/certificates */
   image: string
-  /** Original PDF, if the certificate was issued as one */
-  pdf?: string
   featured?: boolean
 }
 
@@ -26,8 +24,7 @@ export const certificates: Certificate[] = [
   { title: 'Network Security Associate Virtual Internship', issuer: 'EduSkills · AICTE · Fortinet', date: 'Jan – Mar 2024', category: 'Internships', image: c('network-security-associate-vp-eduskills.jpg') },
   { title: 'Network Security Associate Virtual Internship', issuer: 'APSCHE · EduSkills · Fortinet', date: 'Jan – Mar 2024', category: 'Internships', image: c('network-security-associate-vp-completion.jpg') },
   { title: 'Cybersecurity Virtual Internship', issuer: 'EduSkills · AICTE · Palo Alto Networks', date: 'Sep – Nov 2023', category: 'Internships', image: c('cybersecurity-virtual-intertnship.jpg') },
-  { title: 'ServiceNow Project – Calculating Family Expenses', issuer: 'SmartInternz · SmartBridge', date: 'Oct 2025', category: 'Internships', image: c('smartinternz-servicenow.jpg'), pdf: c('smartinternz-servicenow.pdf') },
-  { title: 'Community Internship', issuer: 'Marripadu Grama Sachivalayam, Srikakulam', date: 'May – Jun 2024', category: 'Internships', image: c('community-internship.jpg') },
+  { title: 'ServiceNow Project – Calculating Family Expenses', issuer: 'SmartInternz · SmartBridge', date: 'Oct 2025', category: 'Internships', image: c('smartinternz-servicenow.jpg') },
   { title: 'Ethical Hacking & Cyber Security Internship Offer', issuer: 'Supraja Technologies', date: 'Oct 2024', category: 'Internships', image: c('offer-letter-3-2-internship-from-supraja-technologies-cybersecurity.jpg') },
 
   // Cybersecurity
@@ -41,7 +38,7 @@ export const certificates: Certificate[] = [
   { title: 'Web Development Using Django', issuer: 'AP State Skill Development Corporation', date: 'Sep 2023', category: 'Courses', image: c('web-development-using-django.jpg') },
   { title: 'Data Structures & Algorithms', issuer: 'GeeksforGeeks · AITAM', date: '2025', category: 'Courses', image: c('gfg-training-data-structures-and-algorithms.jpg') },
   { title: 'Python Course', issuer: 'GeeksforGeeks', date: 'Aug 2024', category: 'Courses', image: c('python-gfg.jpg') },
-  { title: 'C Programming Course', issuer: 'Infosys Springboard', date: 'Aug 2023', category: 'Courses', image: c('c-programming.jpg'), pdf: c('c-programming.pdf') },
+  { title: 'C Programming Course', issuer: 'Infosys Springboard', date: 'Aug 2023', category: 'Courses', image: c('c-programming.jpg') },
   { title: 'Productivity Enhancement Tools', issuer: 'AP State Skill Development Corporation', date: 'May 2023', category: 'Courses', image: c('productivity-enhancement-tools.jpg') },
 
   // Events & Community
@@ -53,7 +50,7 @@ export const certificates: Certificate[] = [
   { title: 'Republic Day March Past', issuer: 'JNTU Gurajada Vizianagaram', date: 'Jan 2025', category: 'Events & Community', image: c('march-past-jntugv-republic.jpg') },
   { title: 'Independence Day March Past', issuer: 'JNTU Gurajada Vizianagaram', date: 'Aug 2024', category: 'Events & Community', image: c('march-past-jntugv-independence.jpg') },
   { title: 'National Service Scheme (NSS)', issuer: 'AITAM', date: '2023 – 2024', category: 'Events & Community', image: c('nss.jpg') },
-  { title: 'ISTE Student Membership', issuer: 'Indian Society for Technical Education', date: '2024 – 2027', category: 'Events & Community', image: c('ap120.jpg'), pdf: c('ap120.pdf') },
+  { title: 'ISTE Student Membership', issuer: 'Indian Society for Technical Education', date: '2024 – 2027', category: 'Events & Community', image: c('ap120.jpg') },
   { title: 'CSTA Membership', issuer: 'Computer Science Teachers Association', date: 'Dec 2024', category: 'Events & Community', image: c('csta-membership-card.jpg') },
   { title: 'Certificate of Recognition', issuer: 'MY Bharat · Ministry of Youth Affairs & Sports', date: '', category: 'Events & Community', image: c('certificate-of-recognition-mybharat.jpg') },
 ]

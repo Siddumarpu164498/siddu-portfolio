@@ -1,11 +1,127 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-mode='dark'], [data-mode='dark'] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-paper: var(--paper);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-on-accent: var(--on-accent);
+}
+
+/* Accent palettes: each has a bright tone for dark mode and a deeper tone for light mode */
+:root,
+[data-accent='sky'] {
+  --a-dark: #38bdf8; --a2-dark: #a78bfa;
+  --a-light: #0284c7; --a2-light: #7c3aed;
+}
+[data-accent='yellow'] {
+  --a-dark: #facc15; --a2-dark: #fb923c;
+  --a-light: #a16207; --a2-light: #c2410c;
+}
+[data-accent='orange'] {
+  --a-dark: #fb923c; --a2-dark: #f472b6;
+  --a-light: #ea580c; --a2-light: #db2777;
+}
+[data-accent='purple'] {
+  --a-dark: #c084fc; --a2-dark: #38bdf8;
+  --a-light: #9333ea; --a2-light: #0284c7;
+}
+[data-accent='emerald'] {
+  --a-dark: #34d399; --a2-dark: #38bdf8;
+  --a-light: #059669; --a2-light: #0284c7;
+}
+
+/* Dark mode (default) */
+:root,
+[data-mode='dark'] {
+  color-scheme: dark;
+  --bg: #070b14;
+  --surface: #0d1320;
+  --surface-2: #131b2b;
+  --fg: #f8fafc;
+  --body: #cbd5e1;
+  --muted: #8391a7;
+  --line: rgb(255 255 255 / 0.09);
+  --paper: #e9edf3;
+  --accent: var(--a-dark);
+  --accent-2: var(--a2-dark);
+  --on-accent: #0b1120;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-mode]) {
+    color-scheme: light;
+    --bg: #f7f8fb; --surface: #ffffff; --surface-2: #f1f4f9; --fg: #0f172a; --body: #334155;
+    --muted: #64748b; --line: rgb(15 23 42 / 0.1); --paper: #f1f4f9;
+    --accent: var(--a-light); --accent-2: var(--a2-light); --on-accent: #ffffff;
+  }
+}
+
+[data-mode='light'] {
+  color-scheme: light;
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --fg: #0f172a;
+  --body: #334155;
+  --muted: #64748b;
+  --line: rgb(15 23 42 / 0.1);
+  --paper: #f1f4f9;
+  --accent: var(--a-light);
+  --accent-2: var(--a2-light);
+  --on-accent: #ffffff;
+}
+
 @layer base {
   html {
     @apply scroll-smooth;
   }
-  
+
   body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-bg text-body antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+}
+
+/* Content protection: no image dragging/long-press saving, no text selection, nothing printable */
+img {
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media print {
+  html, body {
+    background: #fff !important;
+  }
+  body > * {
+    display: none !important;
+  }
+  body::after {
+    content: 'Printing is disabled for this website.';
+    display: block;
+    padding: 4rem 2rem;
+    text-align: center;
+    font: 600 18px/1.5 system-ui, sans-serif;
+    color: #111;
   }
 }
