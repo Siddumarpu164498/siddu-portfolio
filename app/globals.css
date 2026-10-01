@@ -109,6 +109,11 @@ body {
   -webkit-touch-callout: none;
 }
 
+input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 @media print {
   html, body {
     background: #fff !important;

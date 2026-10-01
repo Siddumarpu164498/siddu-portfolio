@@ -7,6 +7,11 @@ import { ShieldAlert } from 'lucide-react';
 // shortcuts, and hides the page while printing or when Print Screen is pressed.
 // Browsers cannot block OS-level screenshots, so this discourages rather than prevents capture.
 const BLOCKED_COMBOS = ['p', 's', 'u', 'c', 'a', 'x'];
+// Editing shortcuts that must keep working inside the chat box and contact form.
+const FIELD_COMBOS = ['a', 'c', 'x', 'v', 'z', 'y'];
+
+const inField = (t: EventTarget | null) =>
+  t instanceof HTMLElement && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
 
 export function ContentGuard() {
   const [shield, setShield] = useState(false);
@@ -21,11 +26,14 @@ export function ContentGuard() {
 
     const onContextMenu = (e: MouseEvent) => e.preventDefault();
     const onDragStart = (e: DragEvent) => e.preventDefault();
-    const onCopy = (e: ClipboardEvent) => e.preventDefault();
+    const onCopy = (e: ClipboardEvent) => {
+      if (!inField(e.target)) e.preventDefault();
+    };
 
     const onKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       const mod = e.ctrlKey || e.metaKey;
+      if (mod && !e.shiftKey && FIELD_COMBOS.includes(key) && inField(e.target)) return;
       if (
         key === 'printscreen' ||
         key === 'f12' ||

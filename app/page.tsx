@@ -3,132 +3,36 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import {
-  Mail, MapPin, X, ChevronLeft, ChevronRight, Menu, ArrowUpRight, Award, GraduationCap, Maximize2,
-  Trophy, Users, Mic, Medal, Flag, ShieldCheck, Languages, Heart, Target, BookOpen,
+  ArrowRight, ArrowUpRight, Award, BadgeCheck, Bot, Brain, Briefcase, CheckCircle2, ChevronLeft, ChevronRight, Code2,
+  Cpu, FolderGit2, GitBranch, GraduationCap, Layers, Mail, MapPin, Maximize2, Menu, Search, ShieldCheck, Sparkles,
+  Trophy, User, Users, X,
 } from 'lucide-react';
 import { certificates, certCategories, type CertCategory } from '@/lib/certificates';
+import {
+  ACHIEVEMENTS, EDUCATION, EXPERIENCE, FOCUS, LEADERSHIP, LINKS, MORE_CERTS, PROFILE, PROJECTS, SKILL_CATEGORIES, SKILLS,
+  type ProjectCategory, type SkillCategory,
+} from '@/lib/profile';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { ContentGuard } from '@/components/content-guard';
-
-const LINKS = {
-  github: 'https://github.com/Siddumarpu164498',
-  linkedin: 'https://linkedin.com/in/siddardha-marpu',
-  email: 'siddumarpu123@gmail.com',
-};
+import { Chatbot } from '@/components/chatbot';
+import { GithubRepos } from '@/components/github-repos';
+import { ContactForm } from '@/components/contact-form';
 
 const NAV = [
   { href: '#about', label: 'About' },
+  { href: '#skills', label: 'Skills' },
   { href: '#experience', label: 'Experience' },
   { href: '#projects', label: 'Projects' },
-  { href: '#achievements', label: 'Achievements' },
   { href: '#certificates', label: 'Certificates' },
+  { href: '#github', label: 'GitHub' },
   { href: '#contact', label: 'Contact' },
 ];
 
-const EXPERIENCE = [
-  {
-    company: 'Brightcone.ai', logo: '/logos/brightcone.png', site: 'https://brightcone.ai',
-    roles: [
-      {
-        title: 'Associate ML Engineer', date: 'Aug 2026 – Present', current: true, mode: 'Full-time',
-        points: ['Building machine learning systems, data pipelines and AI/LLM-powered solutions.'],
-      },
-      {
-        title: 'Machine Learning Intern', date: 'Jun 2026 – Jul 2026', mode: 'Internship',
-        points: ['Machine learning internship focused on AI engineering and production-ready ML workflows.'],
-      },
-    ],
-  },
-  {
-    company: 'Yanthraa Information Systems Pvt Ltd', logo: '/logos/yanthraa.png', site: 'https://www.yanthraa.com',
-    roles: [
-      {
-        title: 'Machine Learning Intern', date: 'May 2025 – Aug 2025', mode: 'Offline · Paid internship',
-        points: [
-          'Contributed to Holocron, a proprietary enterprise LLM infrastructure platform.',
-          'Built data ingestion and sensitive-data masking for HIPAA/GDPR compliance.',
-          'Generated embeddings with all-MiniLM-L6-v2 and indexed them with FAISS for fast semantic search.',
-          'Optimized query ranking with ms-marco-MiniLM-L-6-v2 and integrated GPT-4 for AI-driven responses.',
-          'Received a stipend in recognition of contributions to AI solution development.',
-        ],
-      },
-    ],
-  },
-  {
-    company: 'ServiceNow', logo: '/logos/servicenow.png', site: 'https://www.servicenow.com',
-    roles: [
-      {
-        title: 'Certified ServiceNow Intern', date: 'May 2025', mode: 'Online · Virtual internship',
-        points: [
-          'Hands-on ITSM fundamentals: incident management, automated workflows and UI policy scripting.',
-          'Configured ServiceNow instances supporting enterprise operations; earned Certified System Administrator.',
-        ],
-      },
-    ],
-  },
-];
-
-const PROJECTS = [
-  {
-    name: 'Holocron', tagline: 'Enterprise LLM infrastructure · Yanthraa',
-    text: 'Secure, customizable LLM platform for enterprises: ingestion pipelines, HIPAA/GDPR-aware data masking, MiniLM embeddings, FAISS semantic search, cross-encoder re-ranking and GPT-4 responses.',
-    tech: ['Python', 'React', 'TypeScript', 'Tailwind', 'FAISS', 'GPT-4'],
-  },
-  {
-    name: 'Budget-bee', tagline: 'Full-stack expense tracker', href: `${LINKS.github}/Budget-bee`,
-    text: 'Expense tracker with OTP authentication and admin approval workflows.',
-    tech: ['React', 'TypeScript', 'FastAPI', 'PostgreSQL'],
-  },
-  {
-    name: 'Multiverse of 100 DS Projects', tagline: 'Data science series', href: `${LINKS.github}/Multiverse_of_100-_data_science_project_series`,
-    text: 'A 100-project learning series covering EDA, machine learning and deep learning.',
-    tech: ['Python', 'Jupyter', 'Pandas', 'scikit-learn'],
-  },
-  {
-    name: 'Calculating Family Expenses', tagline: 'ServiceNow project · SmartBridge',
-    text: 'A ServiceNow application for calculating and tracking family expenses, completed with SmartInternz / SmartBridge.',
-    tech: ['ServiceNow', 'JavaScript', 'ITSM'],
-  },
-];
-
-const SKILLS: { title: string; items: string[] }[] = [
-  { title: 'Languages', items: ['Python', 'Java', 'C', 'C++', 'JavaScript', 'TypeScript'] },
-  { title: 'AI / ML', items: ['Machine Learning', 'Deep Learning', 'LLMs', 'RAG', 'FAISS', 'Sentence Transformers', 'NLP', 'Pandas', 'NumPy'] },
-  { title: 'Web', items: ['React', 'Next.js', 'Django', 'FastAPI', 'Tailwind CSS', 'Bootstrap', 'HTML / CSS'] },
-  { title: 'Databases', items: ['MySQL', 'PostgreSQL', 'Oracle', 'MongoDB'] },
-  { title: 'Cloud & Tools', items: ['AWS', 'Docker', 'Git', 'GitHub', 'Linux', 'Windows', 'Vercel'] },
-  { title: 'Platforms', items: ['ServiceNow', 'ITSM', 'Jupyter'] },
-];
-
-const EDUCATION = [
-  { t: 'B.Tech, Information Technology', s: 'Aditya Institute of Technology and Management, Tekkali', b: 'JNTU-GV, Vizianagaram', v: 'CGPA 9.16', d: '2022 – 2026' },
-  { t: 'Intermediate (MPC)', s: 'Gayatri Junior College, Munasabpeta', b: 'BIE, Andhra Pradesh', v: '86.7%', d: '2022' },
-  { t: 'Secondary School Certificate', s: 'Government High School, Santhabommali', b: 'BSE, Andhra Pradesh', v: '600 / 600 (100%)', d: '2020' },
-];
-
-const ACHIEVEMENTS = [
-  { icon: BookOpen, title: 'IEEE paper presented', text: 'Single-Head Attention LSTM for battery Remaining Useful Life prediction, IEEE WAMS 2026.' },
-  { icon: Trophy, title: '1st Prize, SQL Competition 1.0', text: 'Department of IT & Institution Innovation Council, AITAM (Jun 2024).' },
-  { icon: Medal, title: 'Best Student, Level-1 Hackathon', text: 'Certificate of Excellence from Supraja Technologies (Oct 2024).' },
-  { icon: Award, title: '3rd Place, Model G20 Summit', text: 'Department of IT, AITAM (Nov 2023).' },
-  { icon: Mic, title: 'YUGMA National Oratory Contest', text: 'Participant at ASTHA School of Management, Bhubaneswar (Feb 2025).' },
-  { icon: Users, title: 'Internship Coordinator', text: 'Coordinator for internships in the Department of IT.' },
-  { icon: ShieldCheck, title: 'Anti-Ragging Committee', text: 'Member representing the Department of IT.' },
-  { icon: Heart, title: 'NSS Volunteer', text: 'Active National Service Scheme volunteer; community internship at Marripadu Grama Sachivalayam (2024).' },
-  { icon: Flag, title: 'March Past, JNTU-GV', text: 'Independence Day 2024 and Republic Day 2025 celebrations.' },
-];
-
-// Certifications without a scanned certificate on this site
-const MORE_CERTS = [
-  { t: 'Data Science for Engineers', i: 'NPTEL · IIT Madras', d: 'Mar 2024' },
-  { t: 'Business Analytics & Text Mining Modeling using Python', i: 'NPTEL · IIT Kharagpur', d: 'Jul 2024' },
-  { t: 'Introduction to Machine Learning', i: 'NPTEL · IIT Madras', d: 'Apr 2025' },
-  { t: 'Certified System Administrator', i: 'ServiceNow', d: 'May 2025' },
-  { t: 'Full Stack Developer', i: 'GeeksforGeeks', d: 'Sep 2024' },
-  { t: 'Data Analysis using Python', i: 'APSSDC', d: '2024' },
-];
-
+const FOCUS_ICONS = [Cpu, Brain, ShieldCheck, Layers];
+const PROJECT_FILTERS: ('All' | ProjectCategory)[] = ['All', 'AI & ML', 'Full Stack', 'Platforms'];
+const PROJECT_ICON: Record<ProjectCategory, typeof Brain> = { 'AI & ML': Brain, 'Full Stack': Code2, Platforms: Layers };
 const PAGE_SIZE = 9;
+const card = 'rounded-2xl border border-line bg-surface';
 
 function GithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -146,32 +50,90 @@ function LinkedinIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-function Section({ id, label, title, intro, children }: { id?: string; label: string; title: string; intro?: string; children: React.ReactNode }) {
+function Section({ id, icon: Icon, label, title, intro, children }: {
+  id?: string; icon: typeof User; label: string; title: string; intro?: string; children: React.ReactNode;
+}) {
   return (
     <section id={id} className="scroll-mt-20 border-t border-line py-20 md:py-24">
-      <div className="mx-auto max-w-5xl px-5">
-        <p className="text-sm font-semibold tracking-wide text-accent">{label}</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-fg md:text-4xl">{title}</h2>
-        {intro && <p className="mt-3 max-w-2xl text-muted">{intro}</p>}
-        <div className="mt-10">{children}</div>
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-accent">
+            <Icon size={13} /> {label}
+          </span>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-fg md:text-4xl">{title}</h2>
+          {intro && <p className="mt-3 text-muted">{intro}</p>}
+        </div>
+        <div className="mt-12">{children}</div>
       </div>
     </section>
   );
 }
 
-const card = 'rounded-2xl border border-line bg-surface';
+function FilterBar<T extends string>({ options, value, onChange, counts }: {
+  options: readonly T[]; value: T; onChange: (v: T) => void; counts?: Record<string, number>;
+}) {
+  return (
+    <div className="-mx-5 overflow-x-auto px-5">
+      <div className="flex w-max gap-2">
+        {options.map(o => (
+          <button
+            key={o}
+            onClick={() => onChange(o)}
+            className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-colors ${
+              value === o ? 'bg-accent font-semibold text-on-accent' : 'border border-line bg-surface text-muted hover:text-fg'
+            }`}
+          >
+            {o}{counts && <span className="ml-1 opacity-60">{counts[o]}</span>}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SearchBox({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string }) {
+  return (
+    <label className="relative block w-full sm:w-64">
+      <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-xl border border-line bg-surface py-2 pl-10 pr-3 text-sm text-fg placeholder:text-muted focus:border-accent/60 focus:outline-none"
+      />
+    </label>
+  );
+}
 
 export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [filter, setFilter] = useState<CertCategory | 'All'>('All');
+
+  const [skillCat, setSkillCat] = useState<'All' | SkillCategory>('All');
+  const [skillQuery, setSkillQuery] = useState('');
+  const skills = SKILLS.filter(
+    s => (skillCat === 'All' || s.category === skillCat) &&
+      `${s.name} ${s.note}`.toLowerCase().includes(skillQuery.trim().toLowerCase()),
+  );
+
+  const [projCat, setProjCat] = useState<'All' | ProjectCategory>('All');
+  const [projQuery, setProjQuery] = useState('');
+  const projects = PROJECTS.filter(
+    p => (projCat === 'All' || p.category === projCat) &&
+      `${p.name} ${p.tagline} ${p.text} ${p.tech.join(' ')}`.toLowerCase().includes(projQuery.trim().toLowerCase()),
+  );
+
+  const [certCat, setCertCat] = useState<CertCategory | 'All'>('All');
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
-
   const filtered = useMemo(
-    () => (filter === 'All' ? certificates : certificates.filter(c => c.category === filter)),
-    [filter],
+    () => (certCat === 'All' ? certificates : certificates.filter(c => c.category === certCat)),
+    [certCat],
   );
   const visible = showAll ? filtered : filtered.slice(0, PAGE_SIZE);
+  const certCounts = useMemo(
+    () => Object.fromEntries(['All', ...certCategories].map(c => [c, c === 'All' ? certificates.length : certificates.filter(x => x.category === c).length])),
+    [],
+  );
 
   const step = useCallback(
     (d: number) => setOpen(o => (o === null ? o : (o + d + filtered.length) % filtered.length)),
@@ -195,6 +157,7 @@ export default function Portfolio() {
 
   const current = open === null ? null : filtered[open];
   const paperIndex = certificates.findIndex(c => c.title.includes('IEEE WAMS'));
+  const totalCerts = certificates.length + MORE_CERTS.length;
 
   return (
     <div className="min-h-screen bg-bg text-body">
@@ -202,13 +165,17 @@ export default function Portfolio() {
 
       {/* Navigation */}
       <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-5">
-          <a href="#" className="font-semibold tracking-tight text-fg">
-            Marpu Siddardha<span className="text-accent">.</span>
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+          <a href="#" className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-2 text-sm font-bold text-on-accent">MS</span>
+            <span className="leading-tight">
+              <span className="block text-sm font-bold text-fg">{PROFILE.name}</span>
+              <span className="block font-mono text-[11px] text-accent">Portfolio</span>
+            </span>
           </a>
           <nav className="hidden items-center gap-6 lg:flex">
             {NAV.map(n => (
-              <a key={n.href} href={n.href} className="text-sm text-muted transition-colors hover:text-fg">{n.label}</a>
+              <a key={n.href} href={n.href} className="text-sm font-medium text-muted transition-colors hover:text-fg">{n.label}</a>
             ))}
           </nav>
           <div className="flex items-center gap-2">
@@ -223,7 +190,7 @@ export default function Portfolio() {
           </div>
         </div>
         {menuOpen && (
-          <nav className="flex flex-col gap-4 border-t border-line px-5 py-4 lg:hidden">
+          <nav className="grid grid-cols-2 gap-3 border-t border-line px-5 py-4 lg:hidden">
             {NAV.map(n => (
               <a key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className="text-body">{n.label}</a>
             ))}
@@ -235,257 +202,299 @@ export default function Portfolio() {
         {/* Hero */}
         <section className="relative overflow-hidden">
           <div
-            className="pointer-events-none absolute inset-x-0 -top-40 h-[32rem] opacity-60"
-            style={{ background: 'radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%)' }}
+            className="pointer-events-none absolute inset-0"
+            style={{ background: 'radial-gradient(60% 50% at 20% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%), radial-gradient(40% 40% at 90% 30%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 70%)' }}
             aria-hidden="true"
           />
-          <div className="relative mx-auto grid max-w-5xl items-center gap-12 px-5 pb-16 pt-16 md:grid-cols-[1fr_auto] md:pb-24 md:pt-24">
+          <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 md:py-24 lg:grid-cols-[1.25fr_1fr]">
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-body">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Associate ML Engineer at Brightcone.ai
+              <p className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> {PROFILE.role}
               </p>
-              <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-fg sm:text-5xl md:text-6xl">
+              <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-fg sm:text-5xl md:text-6xl">
                 Hi, I&apos;m{' '}
-                <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">Siddardha</span>
+                <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">{PROFILE.name}</span>
               </h1>
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-                Software &amp; ML engineer building practical machine learning systems, enterprise LLM infrastructure and
-                full-stack applications with Python, TypeScript and the cloud.
+              <p className="mt-5 flex items-start gap-2 text-lg font-medium text-fg md:text-xl">
+                <Code2 size={20} className="mt-1 shrink-0 text-accent" /> {PROFILE.headline}
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <a href="#contact" className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-on-accent transition-opacity hover:opacity-90">
-                  Get in touch
+              <p className="mt-3 flex items-center gap-2 text-sm text-muted">
+                <MapPin size={15} className="text-accent" /> {PROFILE.location}
+              </p>
+              <p className="mt-5 max-w-xl leading-relaxed">
+                Building machine learning systems, enterprise LLM infrastructure and full-stack applications — from data
+                ingestion and semantic search to the React and FastAPI apps on top.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href="#projects" className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-on-accent shadow-lg shadow-black/10 transition-opacity hover:opacity-90">
+                  Explore projects <ArrowRight size={16} />
                 </a>
-                <a href="#experience" className="rounded-lg border border-line bg-surface px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
-                  View experience
+                <a href="#contact" className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-3 text-sm font-semibold text-fg transition-colors hover:bg-surface-2">
+                  <Mail size={16} /> Contact me
                 </a>
-                <div className="ml-1 flex items-center gap-1">
-                  <a href={LINKS.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="p-2.5 text-muted transition-colors hover:text-fg"><GithubIcon /></a>
-                  <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="p-2.5 text-muted transition-colors hover:text-fg"><LinkedinIcon /></a>
-                  <a href={`mailto:${LINKS.email}`} aria-label="Email" className="p-2.5 text-muted transition-colors hover:text-fg"><Mail size={18} /></a>
-                </div>
+              </div>
+              <div className="mt-8 flex items-center gap-3 border-t border-line pt-6">
+                <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">Connect:</span>
+                {[
+                  { href: LINKS.linkedin, icon: <LinkedinIcon />, label: 'LinkedIn' },
+                  { href: LINKS.github, icon: <GithubIcon />, label: 'GitHub' },
+                  { href: `mailto:${LINKS.email}`, icon: <Mail size={18} />, label: 'Email' },
+                ].map(s => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    {...(s.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    aria-label={s.label}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-surface text-muted transition-colors hover:border-accent/50 hover:text-accent"
+                  >
+                    {s.icon}
+                  </a>
+                ))}
               </div>
             </div>
-            <div className="mx-auto md:mx-0">
-              <div className="rounded-full bg-gradient-to-br from-accent to-accent-2 p-1">
-                <Image
-                  src="/profile.webp"
-                  alt="Marpu Siddardha"
-                  width={201}
-                  height={201}
-                  className="h-44 w-44 rounded-full border-4 border-bg object-cover md:h-[201px] md:w-[201px]"
-                  priority
-                />
-              </div>
-            </div>
-          </div>
 
-          <div className="relative mx-auto max-w-5xl px-5 pb-20">
-            <dl className={`grid grid-cols-2 md:grid-cols-4 ${card}`}>
-              {[
-                { v: '9.16', l: 'B.Tech CGPA' },
-                { v: `${certificates.length + MORE_CERTS.length}+`, l: 'Certifications' },
-                { v: '4', l: 'Roles & internships' },
-                { v: 'IEEE', l: 'Paper presented' },
-              ].map((s, i) => (
-                <div key={s.l} className={`px-6 py-5 ${i > 0 ? 'md:border-l md:border-line' : ''} ${i % 2 === 1 ? 'border-l border-line' : ''} ${i >= 2 ? 'border-t border-line md:border-t-0' : ''}`}>
-                  <dt className="text-xs text-muted">{s.l}</dt>
-                  <dd className="mt-1 text-2xl font-semibold text-fg">{s.v}</dd>
+            {/* Profile card */}
+            <div className={`${card} mx-auto w-full max-w-md p-6 shadow-xl shadow-black/10`}>
+              <div className="flex items-center gap-4">
+                <div className="relative shrink-0">
+                  <div className="rounded-2xl bg-gradient-to-br from-accent to-accent-2 p-[3px]">
+                    <Image src="/profile.webp" alt={PROFILE.name} width={84} height={84} className="h-20 w-20 rounded-[13px] object-cover" priority />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface bg-emerald-500 text-white">
+                    <BadgeCheck size={13} />
+                  </span>
                 </div>
-              ))}
-            </dl>
+                <div className="min-w-0">
+                  <p className="font-bold text-fg">{PROFILE.name}</p>
+                  <p className="font-mono text-xs text-accent">@{LINKS.githubUser}</p>
+                  <p className="mt-1 flex items-center gap-1.5 text-xs text-muted">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> ML Engineer · Brightcone.ai
+                  </p>
+                </div>
+              </div>
+              <dl className="mt-6 grid grid-cols-3 divide-x divide-line rounded-xl border border-line bg-bg/50 py-4 text-center">
+                {[
+                  { v: '9.16', l: 'CGPA' },
+                  { v: `${totalCerts}+`, l: 'Certifications' },
+                  { v: 'IEEE', l: 'Paper' },
+                ].map(s => (
+                  <div key={s.l}>
+                    <dd className="text-xl font-bold text-accent">{s.v}</dd>
+                    <dt className="mt-0.5 text-xs text-muted">{s.l}</dt>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-6 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">Primary tech stack:</p>
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                {PROFILE.stack.map(t => (
+                  <span key={t} className="rounded-md border border-line bg-surface-2 px-2 py-1 font-mono text-xs text-body">{t}</span>
+                ))}
+              </div>
+              <div className="mt-6 flex items-center justify-between border-t border-line pt-4 text-xs">
+                <span className="text-muted">Looking for code?</span>
+                <a href={LINKS.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
+                  github.com/{LINKS.githubUser} <ArrowUpRight size={13} />
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* About */}
-        <Section id="about" label="About" title="A bit about me">
-          <div className="grid gap-10 md:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-4 leading-relaxed">
-              <p>
-                I&apos;m an <span className="font-medium text-fg">Associate ML Engineer at Brightcone.ai</span> and a final-year
-                B.Tech Information Technology student at Aditya Institute of Technology and Management, with a CGPA of 9.16.
-              </p>
-              <p>
-                I enjoy turning machine learning ideas into reliable, production-ready software: data ingestion, embeddings,
-                semantic search, LLM integration and the web apps on top. During my internship at Yanthraa Information Systems
-                I helped build Holocron, an enterprise LLM platform, and I recently presented an IEEE paper on attention-based
-                LSTMs for battery life prediction.
-              </p>
-              <p>
-                Outside of code I volunteer with NSS, coordinate internships for my department and serve on the anti-ragging
-                committee.
-              </p>
+        <Section id="about" icon={User} label="About & focus" title="Building software with purpose" intro="A glimpse into my background and what I care about as an engineer.">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
+            <div className="space-y-4">
+              <div className={`${card} p-6 leading-relaxed`}>
+                <p>
+                  I&apos;m an <span className="font-semibold text-fg">Associate ML Engineer at Brightcone.ai</span> and a final-year
+                  B.Tech Information Technology student at Aditya Institute of Technology and Management (JNTU-GV), with a
+                  CGPA of 9.16.
+                </p>
+                <p className="mt-4">
+                  At Yanthraa Information Systems I helped build Holocron, an enterprise LLM platform with privacy-aware
+                  ingestion, FAISS semantic search and GPT-4 responses. I recently presented an IEEE paper on attention-based
+                  LSTMs for battery life prediction, and I volunteer with NSS and coordinate internships for my department.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { v: '4', l: 'Roles & internships' },
+                  { v: `${totalCerts}+`, l: 'Certifications' },
+                  { v: '1st', l: 'SQL Competition' },
+                ].map(s => (
+                  <div key={s.l} className="rounded-xl border border-accent/20 bg-accent/5 p-4">
+                    <p className="text-2xl font-bold text-accent">{s.v}</p>
+                    <p className="mt-1 text-xs text-muted">{s.l}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <ul className={`${card} divide-y divide-line text-sm`}>
-              {[
-                { icon: Target, k: 'Focus', v: 'ML systems · LLMs · RAG · Full-stack' },
-                { icon: GraduationCap, k: 'Education', v: 'B.Tech IT, AITAM (2026)' },
-                { icon: MapPin, k: 'Location', v: 'Srikakulam, Andhra Pradesh, India' },
-                { icon: Languages, k: 'Languages', v: 'English, Telugu, Hindi' },
-                { icon: Heart, k: 'Interests', v: 'Music, reading books' },
-              ].map(f => (
-                <li key={f.k} className="flex items-start gap-3 px-5 py-4">
-                  <f.icon size={16} className="mt-0.5 shrink-0 text-accent" />
-                  <span className="w-20 shrink-0 text-muted">{f.k}</span>
-                  <span className="text-fg">{f.v}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Section>
-
-        {/* Experience */}
-        <Section id="experience" label="Experience" title="Where I've worked">
-          <div className="space-y-5">
-            {EXPERIENCE.map(x => (
-              <div key={x.company} className={`${card} p-6 md:p-7`}>
-                <div className="flex items-center gap-4">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-white p-1.5">
-                    <Image src={x.logo} alt={`${x.company} logo`} width={40} height={40} className="h-full w-full object-contain" />
-                  </span>
-                  <div className="min-w-0">
-                    <a href={x.site} target="_blank" rel="noopener noreferrer" className="font-semibold text-fg hover:text-accent">{x.company}</a>
-                    <p className="text-sm text-muted">{x.roles.length > 1 ? `${x.roles.length} roles` : x.roles[0].mode}</p>
-                  </div>
-                </div>
-                <div className="mt-5 ml-6 space-y-6 border-l-2 border-line pl-6">
-                  {x.roles.map(r => (
-                    <div key={r.title + r.date} className="relative">
-                      <span className={`absolute -left-[31px] top-1.5 h-3 w-3 rounded-full ring-4 ring-surface ${'current' in r && r.current ? 'bg-accent' : 'bg-muted'}`} />
-                      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                        <h3 className="font-semibold text-fg">{r.title}</h3>
-                        <p className="text-sm text-muted">
-                          {r.date}
-                          {'current' in r && r.current && <span className="ml-2 rounded bg-accent/15 px-1.5 py-0.5 text-xs font-medium text-accent">Now</span>}
-                        </p>
-                      </div>
-                      {x.roles.length > 1 && <p className="text-xs text-muted">{r.mode}</p>}
-                      <ul className="mt-3 space-y-1.5 text-sm leading-relaxed">
-                        {r.points.map(p => (
-                          <li key={p} className="flex gap-2.5"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />{p}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* Projects + publication */}
-        <Section id="projects" label="Work" title="Projects & research">
-          {paperIndex >= 0 && (
-            <button
-              onClick={() => { setFilter('All'); setOpen(paperIndex); }}
-              className="group mb-5 w-full rounded-2xl border border-accent/30 p-6 text-left transition-colors hover:border-accent/60 md:p-8"
-              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface))' }}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wider text-accent">Publication · IEEE WAMS 2026</p>
-              <h3 className="mt-3 text-xl font-semibold text-fg md:text-2xl">
-                Single-Head Attention LSTM for Remaining Useful Life Prediction of Lithium-Ion Batteries
-              </h3>
-              <p className="mt-3 text-sm text-muted">
-                Presented at the 5th IEEE Wireless, Antenna, and Microwave Symposium, B V Raju Institute of Technology, June 2026.
-              </p>
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent">
-                View certificate <ArrowUpRight size={15} />
-              </span>
-            </button>
-          )}
-          <div className="grid gap-5 md:grid-cols-2">
-            {PROJECTS.map(p => {
-              const inner = (
-                <>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-semibold text-fg">{p.name}</h3>
-                      <p className="text-sm text-muted">{p.tagline}</p>
-                    </div>
-                    {p.href && <ArrowUpRight size={18} className="shrink-0 text-muted transition-colors group-hover:text-accent" />}
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed">{p.text}</p>
-                  <div className="mt-5 flex flex-wrap gap-1.5">
-                    {p.tech.map(t => <span key={t} className="rounded-md bg-surface-2 px-2 py-0.5 text-xs text-muted">{t}</span>)}
-                  </div>
-                </>
-              );
-              const cls = `group block ${card} p-6 transition-colors hover:border-accent/40`;
-              return p.href ? (
-                <a key={p.name} href={p.href} target="_blank" rel="noopener noreferrer" className={cls}>{inner}</a>
-              ) : (
-                <div key={p.name} className={cls}>{inner}</div>
-              );
-            })}
-          </div>
-        </Section>
-
-        {/* Skills + education */}
-        <Section label="Skills" title="Skills & education">
-          <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-            {SKILLS.map(s => (
-              <div key={s.title}>
-                <h3 className="text-sm font-semibold text-fg">{s.title}</h3>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {s.items.map(item => (
-                    <span key={item} className="rounded-md border border-line bg-surface px-2.5 py-1 text-sm">{item}</span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-14 grid gap-5 md:grid-cols-3">
-            {EDUCATION.map(e => (
-              <div key={e.t} className={`${card} p-6`}>
-                <GraduationCap size={20} className="text-accent" />
-                <h3 className="mt-4 font-semibold text-fg">{e.t}</h3>
-                <p className="mt-1 text-sm">{e.s}</p>
-                <p className="text-sm text-muted">{e.b}</p>
-                <div className="mt-4 flex items-center justify-between text-sm">
-                  <span className="font-semibold text-accent">{e.v}</span>
-                  <span className="text-muted">{e.d}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* Achievements */}
-        <Section id="achievements" label="Achievements" title="Awards & leadership">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {ACHIEVEMENTS.map(a => (
-              <div key={a.title} className={`${card} p-5`}>
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/15 text-accent"><a.icon size={18} /></span>
-                <h3 className="mt-4 font-semibold text-fg">{a.title}</h3>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{a.text}</p>
-              </div>
-            ))}
-          </div>
-        </Section>
-
-        {/* Certificates */}
-        <Section id="certificates" label="Certificates" title="Certifications" intro="Click any certificate to view it.">
-          <div className="-mx-5 mb-8 overflow-x-auto px-5">
-            <div className="flex w-max gap-2">
-              {(['All', ...certCategories] as const).map(cat => {
-                const count = cat === 'All' ? certificates.length : certificates.filter(c => c.category === cat).length;
-                const active = filter === cat;
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+              {FOCUS.map((f, i) => {
+                const Icon = FOCUS_ICONS[i];
                 return (
-                  <button
-                    key={cat}
-                    onClick={() => { setFilter(cat); setShowAll(false); }}
-                    className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm transition-colors ${
-                      active ? 'bg-accent font-medium text-on-accent' : 'border border-line text-muted hover:text-fg'
-                    }`}
-                  >
-                    {cat} <span className="opacity-60">{count}</span>
-                  </button>
+                  <div key={f.title} className={`${card} flex gap-4 p-5`}>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent"><Icon size={18} /></span>
+                    <div>
+                      <h3 className="font-semibold text-fg">{f.title}</h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted">{f.text}</p>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           </div>
+        </Section>
 
+        {/* Skills */}
+        <Section id="skills" icon={Cpu} label="Technical capabilities" title="Skills & expertise" intro="Languages, frameworks, data and cloud tools I work with.">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <FilterBar options={['All', ...SKILL_CATEGORIES] as const} value={skillCat} onChange={setSkillCat} />
+            <SearchBox value={skillQuery} onChange={setSkillQuery} placeholder="Search skills…" />
+          </div>
+          {skills.length ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {skills.map(s => (
+                <div key={s.name} className={`${card} p-5 transition-colors hover:border-accent/40`}>
+                  <p className="flex items-start gap-2 font-semibold text-fg">
+                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-500" /> {s.name}
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-accent">{s.category}</p>
+                  <p className="mt-3 text-sm text-muted">{s.note}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-sm text-muted">No skills match “{skillQuery}”.</p>
+          )}
+        </Section>
+
+        {/* Experience & education */}
+        <Section id="experience" icon={Briefcase} label="Career history" title="Experience & education" intro="Professional journey, key contributions and academic foundation.">
+          <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+            <div>
+              <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-fg"><Briefcase size={18} className="text-accent" /> Work experience</h3>
+              <ol className="relative space-y-6 border-l-2 border-line pl-6">
+                {EXPERIENCE.flatMap(job =>
+                  job.roles.map(r => (
+                    <li key={job.company + r.title + r.date} className="relative">
+                      <span className={`absolute -left-[33px] top-6 h-4 w-4 rounded-full border-[3px] border-bg ${r.current ? 'bg-accent' : 'bg-muted'}`} />
+                      <div className={`${card} p-5 md:p-6`}>
+                        <div className="flex flex-wrap items-start gap-4">
+                          <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-white p-1.5">
+                            <Image src={job.logo} alt={`${job.company} logo`} width={36} height={36} className="h-full w-full object-contain" />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-semibold text-fg">{r.title}</h4>
+                            <a href={job.site} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline">
+                              {job.company} <ArrowUpRight size={13} />
+                            </a>
+                          </div>
+                          <div className="text-right">
+                            <p className="rounded-md border border-line bg-surface-2 px-2 py-1 font-mono text-[11px] text-muted">{r.date}</p>
+                            <p className="mt-1 text-[11px] text-muted">{r.mode}</p>
+                          </div>
+                        </div>
+                        <ul className="mt-4 space-y-2 text-sm leading-relaxed">
+                          {r.points.map(p => (
+                            <li key={p} className="flex gap-2.5"><CheckCircle2 size={15} className="mt-0.5 shrink-0 text-emerald-500" />{p}</li>
+                          ))}
+                        </ul>
+                        <div className="mt-4 flex flex-wrap gap-1.5">
+                          {r.tags.map(t => <span key={t} className="rounded-md border border-line bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-muted">{t}</span>)}
+                        </div>
+                      </div>
+                    </li>
+                  )),
+                )}
+              </ol>
+            </div>
+            <div>
+              <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-fg"><GraduationCap size={18} className="text-accent" /> Education</h3>
+              <div className="space-y-4">
+                {EDUCATION.map(e => (
+                  <div key={e.t} className={`${card} p-5`}>
+                    <div className="flex items-start justify-between gap-3">
+                      <h4 className="font-semibold text-fg">{e.t}</h4>
+                      <span className="shrink-0 rounded-md border border-line bg-surface-2 px-2 py-1 font-mono text-[11px] text-muted">{e.d}</span>
+                    </div>
+                    <p className="mt-1 text-sm font-medium text-accent">{e.s}</p>
+                    <p className="text-xs text-muted">{e.b}</p>
+                    <span className="mt-3 inline-block rounded-md bg-accent/10 px-2 py-1 font-mono text-xs font-semibold text-accent">{e.v}</span>
+                    {e.points.length > 0 && (
+                      <ul className="mt-3 space-y-1 text-sm text-muted">
+                        {e.points.map(p => <li key={p} className="flex gap-2"><span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />{p}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* Projects */}
+        <Section id="projects" icon={FolderGit2} label="Showcase & research" title="Featured projects" intro="Production AI work, research and full-stack builds.">
+          {paperIndex >= 0 && (
+            <button
+              onClick={() => { setCertCat('All'); setOpen(paperIndex); }}
+              className="group mb-8 w-full rounded-2xl border border-accent/30 p-6 text-left transition-colors hover:border-accent/60 md:p-8"
+              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, var(--surface)), color-mix(in srgb, var(--accent-2) 8%, var(--surface)))' }}
+            >
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-wider text-accent">Publication · IEEE WAMS 2026</p>
+              <h3 className="mt-3 text-xl font-bold text-fg md:text-2xl">
+                Single-Head Attention LSTM for Remaining Useful Life Prediction of Lithium-Ion Batteries
+              </h3>
+              <p className="mt-2 text-sm text-muted">
+                Presented at the 5th IEEE Wireless, Antenna, and Microwave Symposium, B V Raju Institute of Technology, June 2026.
+              </p>
+              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent">View certificate <ArrowUpRight size={15} /></span>
+            </button>
+          )}
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <FilterBar options={PROJECT_FILTERS} value={projCat} onChange={setProjCat} />
+            <SearchBox value={projQuery} onChange={setProjQuery} placeholder="Filter by tech or keyword…" />
+          </div>
+          {projects.length ? (
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {projects.map(p => {
+                const Icon = PROJECT_ICON[p.category];
+                return (
+                  <div key={p.name} className={`group flex flex-col overflow-hidden ${card} transition-colors hover:border-accent/40`}>
+                    <div
+                      className="relative flex h-28 items-center justify-center"
+                      style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--surface-2)), color-mix(in srgb, var(--accent-2) 14%, var(--surface-2)))' }}
+                    >
+                      <Icon size={36} className="text-accent opacity-80" />
+                      <span className="absolute left-3 top-3 rounded-md bg-surface/90 px-2 py-1 font-mono text-[10px] font-semibold text-fg">{p.category}</span>
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="font-bold text-fg">{p.name}</h3>
+                      <p className="text-xs font-medium text-accent">{p.tagline}</p>
+                      <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">{p.text}</p>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {p.tech.map(t => <span key={t} className="rounded-md border border-line bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-muted">{t}</span>)}
+                      </div>
+                      {p.href && (
+                        <a href={p.href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1 border-t border-line pt-4 text-sm font-semibold text-accent">
+                          <GithubIcon size={15} /> View repository <ArrowUpRight size={14} />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-center text-sm text-muted">No projects match “{projQuery}”.</p>
+          )}
+        </Section>
+
+        {/* Certificates */}
+        <Section id="certificates" icon={Award} label="Verified credentials" title="Certifications & achievements" intro={`${totalCerts}+ certifications across ML, cybersecurity, cloud and development. Click any certificate to view it.`}>
+          <div className="mb-8">
+            <FilterBar options={['All', ...certCategories] as const} value={certCat} onChange={v => { setCertCat(v); setShowAll(false); }} counts={certCounts} />
+          </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((cert, idx) => (
               <button
@@ -501,27 +510,26 @@ export default function Portfolio() {
                   </span>
                   {cert.featured && (
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-xs font-semibold text-on-accent">
-                      <Award size={12} /> Highlight
+                      <Sparkles size={12} /> Highlight
                     </span>
                   )}
                 </div>
                 <div className="flex flex-1 flex-col p-5">
-                  <h3 className="font-medium leading-snug text-fg">{cert.title}</h3>
+                  <h3 className="font-semibold leading-snug text-fg">{cert.title}</h3>
                   <p className="mt-1 text-sm text-muted">{cert.issuer}</p>
-                  <div className="mt-auto flex items-center justify-between pt-4 text-xs text-muted">
-                    <span>{cert.category}</span>
-                    <span>{cert.date}</span>
+                  <div className="mt-auto flex items-center justify-between pt-4 text-xs">
+                    <span className="flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400"><BadgeCheck size={13} /> {cert.category}</span>
+                    <span className="text-muted">{cert.date}</span>
                   </div>
                 </div>
               </button>
             ))}
           </div>
-
           {filtered.length > PAGE_SIZE && (
             <div className="mt-10 text-center">
               <button
                 onClick={() => setShowAll(s => !s)}
-                className="rounded-lg border border-line bg-surface px-5 py-2.5 text-sm font-medium text-fg transition-colors hover:bg-surface-2"
+                className="rounded-xl border border-line bg-surface px-5 py-2.5 text-sm font-semibold text-fg transition-colors hover:bg-surface-2"
               >
                 {showAll ? 'Show less' : `Show all ${filtered.length} certificates`}
               </button>
@@ -529,56 +537,93 @@ export default function Portfolio() {
           )}
 
           <h3 className="mt-16 text-lg font-semibold text-fg">More certifications</h3>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {MORE_CERTS.map(m => (
-              <li key={m.t} className={`flex items-start gap-3 ${card} px-5 py-4`}>
-                <Award size={16} className="mt-0.5 shrink-0 text-accent" />
+              <div key={m.t} className={`flex items-start gap-3 ${card} px-5 py-4`}>
+                <ShieldCheck size={16} className="mt-0.5 shrink-0 text-accent" />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-fg">{m.t}</p>
-                  <p className="text-xs text-muted">{m.i}</p>
+                  <p className="text-xs text-muted">{m.i} · {m.d}</p>
                 </div>
-                <span className="shrink-0 text-xs text-muted">{m.d}</span>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
+
+          {/* Awards & leadership */}
+          <div
+            className="mt-14 grid gap-8 rounded-3xl border border-accent/25 p-6 md:p-10 lg:grid-cols-2"
+            style={{ background: 'linear-gradient(120deg, color-mix(in srgb, var(--accent) 16%, var(--surface)), color-mix(in srgb, var(--accent-2) 16%, var(--surface)))' }}
+          >
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface/70 px-3 py-1 font-mono text-[11px] font-semibold text-accent">
+                <Trophy size={13} /> Awards & leadership
+              </span>
+              <h3 className="mt-4 text-2xl font-bold text-fg md:text-3xl">Beyond the code</h3>
+              <p className="mt-2 text-sm text-body">Competitions, research and community work I&apos;m proud of.</p>
+              <ul className="mt-6 space-y-2.5">
+                {ACHIEVEMENTS.map(a => (
+                  <li key={a} className="flex gap-2.5 text-sm text-fg"><Trophy size={15} className="mt-0.5 shrink-0 text-accent" />{a}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="space-y-3">
+              {LEADERSHIP.map(l => (
+                <div key={l} className="flex items-start gap-3 rounded-xl border border-line bg-surface/70 px-4 py-3.5 text-sm text-fg">
+                  <Users size={16} className="mt-0.5 shrink-0 text-accent" /> {l}
+                </div>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        {/* GitHub */}
+        <Section id="github" icon={GitBranch} label="GitHub sync" title="Live GitHub repositories" intro={`Fetched directly from github.com/${LINKS.githubUser}.`}>
+          <GithubRepos />
         </Section>
 
         {/* Contact */}
-        <Section id="contact" label="Contact" title="Let's work together" intro="Open to conversations about machine learning, AI/LLMs, full-stack development and ServiceNow.">
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { href: `mailto:${LINKS.email}`, icon: <Mail size={18} />, t: 'Email', v: LINKS.email },
-              { href: LINKS.linkedin, icon: <LinkedinIcon />, t: 'LinkedIn', v: 'in/siddardha-marpu' },
-              { href: LINKS.github, icon: <GithubIcon />, t: 'GitHub', v: 'Siddumarpu164498' },
-            ].map(x => (
-              <a
-                key={x.t}
-                href={x.href}
-                {...(x.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                className={`group flex items-center gap-4 ${card} p-5 transition-colors hover:border-accent/40`}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent">{x.icon}</span>
-                <span className="min-w-0">
-                  <span className="block text-xs text-muted">{x.t}</span>
-                  <span className="block truncate text-sm font-medium text-fg">{x.v}</span>
-                </span>
-              </a>
-            ))}
+        <Section id="contact" icon={Mail} label="Get in touch" title="Let's build something together" intro="Open to ML engineering roles, collaborations and interesting AI/LLM projects.">
+          <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+            <div className={`${card} p-6 md:p-7`}>
+              <h3 className="text-lg font-semibold text-fg">Contact details</h3>
+              <ul className="mt-5 space-y-4">
+                <li className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent"><Mail size={18} /></span>
+                  <div><p className="text-xs text-muted">Email</p><a href={`mailto:${LINKS.email}`} className="text-sm font-semibold text-fg hover:text-accent">{LINKS.email}</a></div>
+                </li>
+                <li className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent"><MapPin size={18} /></span>
+                  <div><p className="text-xs text-muted">Location</p><p className="text-sm font-semibold text-fg">{PROFILE.location}</p></div>
+                </li>
+                <li className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent"><Bot size={18} /></span>
+                  <div><p className="text-xs text-muted">Quick questions?</p><p className="text-sm font-semibold text-fg">Ask my AI assistant (bottom right)</p></div>
+                </li>
+              </ul>
+              <p className="mt-6 border-t border-line pt-5 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted">Social profiles:</p>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 py-2.5 text-sm font-semibold text-fg hover:border-accent/50"><LinkedinIcon size={16} /> LinkedIn</a>
+                <a href={LINKS.github} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-xl border border-line bg-surface-2 py-2.5 text-sm font-semibold text-fg hover:border-accent/50"><GithubIcon size={16} /> GitHub</a>
+              </div>
+            </div>
+            <ContactForm />
           </div>
         </Section>
       </main>
 
       <footer className="border-t border-line py-8">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-5 text-sm text-muted sm:flex-row">
-          <p>© {new Date().getFullYear()} Marpu Siddardha</p>
-          <p>Built with Next.js &amp; Tailwind CSS</p>
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 text-sm text-muted sm:flex-row">
+          <p>© {new Date().getFullYear()} {PROFILE.name}</p>
+          <p>Built with Next.js, Tailwind CSS &amp; Claude</p>
         </div>
       </footer>
+
+      <Chatbot />
 
       {/* Certificate viewer */}
       {current && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
           onClick={() => setOpen(null)}
           role="dialog"
           aria-modal="true"
